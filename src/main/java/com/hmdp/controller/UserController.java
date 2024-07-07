@@ -11,7 +11,7 @@ import com.hmdp.service.IUserService;
 import com.hmdp.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
+import com.hmdp.utils.RedisConstants;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
