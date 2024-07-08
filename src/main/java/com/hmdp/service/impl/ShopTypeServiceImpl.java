@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -43,6 +44,7 @@ public class ShopTypeServiceImpl extends ServiceImpl<ShopTypeMapper, ShopType> i
             for (String s : shopTypeJson) {
                 chechListShopType.add(JSONUtil.toBean(s, ShopType.class));
             }
+            chechListShopType.sort(Comparator.comparing(ShopType::getSort));
             return Result.ok(chechListShopType);
         }
 
