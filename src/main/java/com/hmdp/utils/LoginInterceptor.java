@@ -6,6 +6,7 @@ import com.hmdp.dto.UserDTO;
 import com.hmdp.entity.User;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.w3c.dom.UserDataHandler;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,29 +17,14 @@ import java.util.concurrent.TimeUnit;
 
 public class LoginInterceptor implements HandlerInterceptor {
 
-    private StringRedisTemplate stringRedisTemplate;
-    public LoginInterceptor(StringRedisTemplate stringRedisTemplate){
-        this.stringRedisTemplate = stringRedisTemplate;
-    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-        String token = request.getHeader("authorization");
-        if (StrUtil.isBlank(token)) {
+        // 1.判断是否需要拦截（ThreadLocal中是否有用户）
+        if (UserHolder.getUser() == null) {
             response.setStatus(401);
             return false;
         }
-        String tokenKey = RedisConstants.LOGIN_USER_KEY + token;
-        Map<Object, Object> userMap = stringRedisTemplate.opsForHash().entries(tokenKey);
-
-        if (userMap.isEmpty()) {
-            response.setStatus(401);
-            return false;
-        }
-        UserDTO  userDTO = BeanUtil.fillBeanWithMap(userMap, new UserDTO(), false);
-        UserHolder.saveUser(userDTO);
-
-        stringRedisTemplate.expire(tokenKey, 30, TimeUnit.MINUTES);
         return true;
     }
 
